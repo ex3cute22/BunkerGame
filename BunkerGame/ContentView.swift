@@ -15,10 +15,10 @@ let profAll = ["Охотник", "Врач", "Инженер"]
 
 let personage = ["🧟‍♂️", "👨‍⚕️","👩‍⚕️","👨‍🔧","👩‍🔧", "👨‍🚒","👩‍🚒", "☠️", "🔧"]
 
-var amountOfPeople = 100
+var amountOfPeople = 10
 var currentIndex = 0
 
-var timeOfDay = 30.0
+var timeOfDay = 10.0
 let freq = 0.05
 
 var bunker = Bunker()
