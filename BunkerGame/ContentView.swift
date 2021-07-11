@@ -6,28 +6,24 @@
 //
 
 import SwiftUI
-import Foundation
 import Combine
 
 
 let sexAll = ["Мужской", "Женский"]
 let profAll = ["Охотник", "Врач", "Инженер"]
 
-let personage = ["🧟‍♂️", "👨‍⚕️","👩‍⚕️","👨‍🔧","👩‍🔧", "👨‍🚒","👩‍🚒", "☠️", "🔧"]
+let personage = ["🧟‍♂️", "👨‍⚕️","👩‍⚕️","👨‍🔧","👩‍🔧", "👨‍🚒","👩‍🚒", "☠️"]
 
 var amountOfPeople = 10
 var currentIndex = 0
 
-var timeOfDay = 10.0
+var timeOfDay = 15.0
 let freq = 0.05
 
 var bunker = Bunker()
 var forest = Forest()
 var mine = Mine()
 
-var choose : Bool = Bool.random()
-
-var isFirstLaunch = true
 var installTimerOfDay = true
 var installTimerOfHalfDay = true
 
@@ -96,19 +92,12 @@ struct ContentView: View {
                             Text("Бункер\n👤\(VM.world.humObj.getAmountOfPeople())/\(bunker.CapacityOfPeople)\n🍖\(bunker.FoodSupply)/\(bunker.maxFoodSupply)\n🧱\(bunker.ResourcesSupply)/\(bunker.maxResourcesSupply)")
                         }
                         .position(bunker.position)
-                        //                    .gesture(DragGesture()
-                        //                                .onChanged{value in
-                        //
-                        //                                    bunker.position = value.location
-                        //
-                        //                                }
-                        //                    )
                         
                         ZStack{
                             RoundedRectangle(cornerRadius: 15)
                                 .fill(Color.black.opacity(0.5))
                                 .frame(width: mine.x - mine.x0 + 30, height: mine.y - mine.y0 + 30)
-                            Text("Шахта⛏\n🧱\(mine.amountOfResources)/\(VM.world.humObj.getAmountOfPeople() * 2)")
+                            Text("Шахта⛏\n🧱\(mine.amountOfResources)/\(bunker.maxResourcesSupply * 2)")
                             
                         }
                         .position(x: (mine.x + mine.x0) / 2, y: (mine.y + mine.y0) / 2)
@@ -117,7 +106,7 @@ struct ContentView: View {
                             RoundedRectangle(cornerRadius: 15)
                                 .fill(Color.green.opacity(0.5))
                                 .frame(width: forest.x - forest.x0 + 30, height: forest.y - forest.y0 + 30)
-                            Text("Лес🦌\n🍖\(forest.amountOfResources)/\(VM.world.humObj.getAmountOfPeople() * 2)")
+                            Text("Лес🦌\n🍖\(forest.amountOfResources)/\(bunker.maxFoodSupply * 2)")
                             
                         }
                         
@@ -126,32 +115,22 @@ struct ContentView: View {
                         
                         ForEach(VM.world.humObj.humans){human in
                             
-                            //VM.world.humObj.humans.indices.forEach{
-                            //ZStack{
                             
                             if human.Profession == "Охотник"{
                                 
                                 ZStack{
                                     
-                                    //if (human.isAlive){
-                                    Text(human.isAlive == false ? personage[7] : human.sex == "Мужской" ? personage[5] : personage[6])
-                                        
-                                        //                                        }
-                                        //                                        else {
-                                        //                                            Text(personage[7])
-                                        //                                        }
-                                        
+                                    Text(!human.isAlive ? personage[7] : human.sex == "Мужской" ? personage[5] : personage[6])
                                         .foregroundColor(Color.green)
                                     VStack{
                                         Text(human.isFight ? "⚔️" : human.isLove ? "👩‍❤️‍👨" : "")
                                             .font(.system(size: 12))
                                         Capsule()
                                             .frame(width: CGFloat(human.Character.Health)/CGFloat(human.Character.maxHealth) * human.size, height: 2)
-                                            //.fill(Color.white)
                                             .foregroundColor(human.Character.Health > 70 ? .green : human.Character.Health > 30 ? .yellow : .red)
                                             .cornerRadius(20)
                                         Capsule()
-                                            .frame(width: CGFloat(human.satiety)/10 * human.size, height: 2)
+                                            .frame(width: CGFloat(human.Character.Satiety)/10 * human.size, height: 2)
                                             .foregroundColor(.blue)
                                             .cornerRadius(20)
                                             .offset(y: -6)
@@ -174,7 +153,7 @@ struct ContentView: View {
                                 
                                 ZStack{
                                     
-                                    Text(human.sex == "Мужской" ? personage[1] : personage[2])
+                                    Text(!human.isAlive ? personage[7] : human.sex == "Мужской" ? personage[1] : personage[2])
                                     
                                     VStack{
                                         Text(!human.isFree ? "💊" : human.isLove ? "👩‍❤️‍👨" : "")
@@ -184,7 +163,7 @@ struct ContentView: View {
                                             .foregroundColor(human.Character.Health > 70 ? .green : human.Character.Health > 30 ? .yellow : .red)
                                             .cornerRadius(20)
                                         Capsule()
-                                            .frame(width: CGFloat(human.satiety)/10 * human.size, height: 2)
+                                            .frame(width: CGFloat(human.Character.Satiety)/10 * human.size, height: 2)
                                             .foregroundColor(.blue)
                                             .cornerRadius(20)
                                             .offset(y: -6)
@@ -208,7 +187,7 @@ struct ContentView: View {
                                 
                                 ZStack{
                                     
-                                    Text(human.sex == "Мужской" ? personage[3] : personage[4])
+                                    Text(!human.isAlive ? personage[7] : human.sex == "Мужской" ? personage[3] : personage[4])
                                         .foregroundColor(.blue)
                                     
                                     VStack{
@@ -219,7 +198,7 @@ struct ContentView: View {
                                             .foregroundColor(human.Character.Health > 70 ? .green : human.Character.Health > 30 ? .yellow : .red)
                                             .cornerRadius(20)
                                         Capsule()
-                                            .frame(width: CGFloat(human.satiety)/10 * human.size, height: 2)
+                                            .frame(width: CGFloat(human.Character.Satiety)/10 * human.size, height: 2)
                                             .foregroundColor(.blue)
                                             .cornerRadius(20)
                                             .offset(y: -6)
@@ -238,7 +217,6 @@ struct ContentView: View {
                                     
                                 }
                                 
-                                //}
                                 
                             }
                         }
@@ -303,7 +281,7 @@ struct ContentView: View {
                                         VStack(alignment: .leading){
                                             
                                             Text("❤️ Здоровье: \(VM.world.humObj.humans[currentIndex].Character.Health)/\(VM.world.humObj.humans[currentIndex].Character.maxHealth)")
-                                            Text("🍗 Сытость: \(VM.world.humObj.humans[currentIndex].satiety)/10")
+                                            Text("🍗 Сытость: \(VM.world.humObj.humans[currentIndex].Character.Satiety)/10")
                                             
                                             Text("💪 Сила: \(VM.world.humObj.humans[currentIndex].Character.Strength)")
                                             Text("🏃‍♂️ Ловкость: \(VM.world.humObj.humans[currentIndex].Character.Agility)")
@@ -329,16 +307,13 @@ struct ContentView: View {
                                         .padding()
                                     
                                 )
-                                //.animation(.spring())
                             }
                             
                         }
                     }
-                    //}
                 }
                 
             }
-            //.navigationBarBackButtonHidden(true)
             .navigationBarHidden(true)
             
         }
@@ -375,40 +350,19 @@ struct InfoView : View{
                     }
                     
                     Section(header: Text("Бункер")){
-                        Text("🍖 Запасы еды: \(bunker.FoodSupply)")
-                        Text("🧱 Запасы ресурсов: \(bunker.ResourcesSupply)")
-                        Text("📈 Прирост людей: \(bunker.Growth)")
+                        Text("👥 Вместимость: \(bunker.CapacityOfPeople)")
+                        Text("🍖 Запасы еды: \(bunker.FoodSupply) из \(bunker.maxFoodSupply) возможных")
+                        Text("🧱 Запасы ресурсов: \(bunker.ResourcesSupply) из \(bunker.maxResourcesSupply) возможных")
                     }
                 }
             }
             .navigationBarHidden(true)
-            //.navigationBarTitle(Text("Настройки"), displayMode: .inline)
-            //.edgesIgnoringSafeArea(.bottom)
             .navigationBarBackButtonHidden(true)
-            //        .navigationBarItems(leading:
-            //                                Button(action: {
-            //                                    self.presentation.wrappedValue.dismiss()
-            //                                }, label: {
-            //                                    HStack{
-            //                                    Image(systemName: "chevron.backward")
-            //                                    Text("Назад")
-            //                                    }
-            //                                }))
             
         }
     }
     
 }
-
-//struct MessageBox : View {
-//
-//    var body: some View{
-//
-//        Text("Вы проиграли")
-//
-//    }
-//
-//}
 
 
 class Forest {
@@ -424,6 +378,7 @@ class Forest {
         y0 = 380
         x = UIScreen.main.bounds.width - 30
         y = 600
+        
         amountOfResources = amountOfPeople * 2
     }
     
@@ -441,10 +396,7 @@ class Mine {
         y0 = 630
         x = 250
         y = 700
-        //        x0 = 100
-        //        y0 = 100
-        //        x = 300
-        //        y = 200
+        
         amountOfResources = amountOfPeople * 2
     }
     
@@ -469,7 +421,6 @@ class Bunker {
     var maxFoodSupply : Int
     var ResourcesSupply : Int
     var maxResourcesSupply : Int
-    var Growth : Double
     var x0 : CGFloat
     var y0 : CGFloat
     var x : CGFloat
@@ -481,26 +432,15 @@ class Bunker {
         CapacityOfPeople = amountOfPeople
         FoodSupply = amountOfPeople
         ResourcesSupply = 0 //amountOfPeople
-        Growth = 0.01
-        //        x0 = 50
-        //        y0 = 630
-        //        x = 250
-        //        y = 700
+        
         x0 = 100
         y0 = 100
-//        x0 = CGFloat(Int.random(in: 60...Int(UIScreen.main.bounds.width) - 60))
-//        y0 = CGFloat(Int.random(in: 60...Int(UIScreen.main.bounds.height) - 60))
+        
         x = x0 + 200
         y = y0 + 100
         position = CGPoint(x: (x + x0) / 2, y: (y + y0) / 2)
         maxFoodSupply = FoodSupply
         maxResourcesSupply = amountOfPeople
-    }
-    
-    func getPos() -> CGPoint{
-        
-        return CGPoint(x: (x + x0) / 2, y: (y + y0) / 2)
-        
     }
 }
 
@@ -508,14 +448,14 @@ class Zombie : Identifiable{
     
     var id = UUID()
     var position : CGPoint
-    var Character : Сharacteristic
+    var Character : Characteristic
     var range: CGFloat
     @Published var isFight : Bool
     @Published var isAlive : Bool
     
     init(){
         position = CGPoint(x: 0, y: 0)
-        Character = Сharacteristic.init()
+        Character = Characteristic.init()
         Character.Strength /= 2
         Character.Agility /= 2
         Character.Intelligence = 0
@@ -563,10 +503,13 @@ class ZombieObject : ObservableObject{
         }
     }
 }
-class Сharacteristic {
+
+class Characteristic {
     
     @Published var Health : Int
     var maxHealth : Int
+    @Published var Satiety : Int
+    
     
     var Strength : Int
     var Agility : Int
@@ -580,8 +523,9 @@ class Сharacteristic {
         Agility = Int.random(in: 2...10)
         Intelligence = Int.random(in: 2...10)
         
-        Health = 100//Int.random(in: 70...100)
+        Health = 100
         maxHealth = 100
+        Satiety = 10
     }
 }
 
@@ -592,13 +536,12 @@ class Human : Identifiable{
     var size: CGFloat
     
     var position: CGPoint
-    var Character : Сharacteristic
+    var Character : Characteristic
     var Profession : String
     
     
     var target_coord : CGPoint
     var backpack : Backpack
-    @Published var satiety : Int
     @Published var isFight : Bool
     @Published var isAlive : Bool
     @Published var isFree : Bool
@@ -612,7 +555,6 @@ class Human : Identifiable{
     func step() {
         
         if Profession == "Охотник" {
-            
             
             if position.x != target_coord.x{
                 
@@ -720,12 +662,11 @@ class Human : Identifiable{
                 isRelax = true
                 
                 Timer.scheduledTimer(withTimeInterval: timeOfDay / 2, repeats: false){[self]timer in
-                    //if bunker.FoodSupply > 0{
+                    
                     isRelax = false
                     inWay = false
                     isFree = true
                     timer.invalidate()
-                    //}
                 }
                 
                 if backpack.amountOfFoods > 0 && bunker.FoodSupply < bunker.maxFoodSupply{
@@ -767,18 +708,6 @@ class Human : Identifiable{
                 
             }
             
-        } else if Profession == "Врач"{
-            
-//            if amountOfPeople < bunker.CapacityOfPeople && isFree {
-//
-//                isFree = false
-//
-//
-//
-//
-//                //Timer.scheduledTimer(withTimeInterval: , repeats: <#T##Bool#>, block: <#T##(Timer) -> Void#>)
-//            }
-            
         }  else if Profession == "Инженер"{
             
             if bunker.ResourcesSupply != 0 && isFree{
@@ -794,63 +723,9 @@ class Human : Identifiable{
                     bunker.maxResourcesSupply += 1
                 }
             }
-            //            }else if !isFree {
-            
-            //                var pos = position
-            //
-            //                repeat{
-            //                    pos = position
-            //                    pos.x += CGFloat(Int.random(in: -1...1) * Character.Agility)
-            //                    pos.y += CGFloat(Int.random(in: -1...1) * Character.Agility)
-            //                }while(position.x < bunker.x0 || position.x > bunker.x || position.y < bunker.y0 || position.y > bunker.y)
-            //
-            //                position = pos
-            //}
-            //}
-            
-            //            } else if !isFree {
-            //
-            //                var pos = position
-            //
-            //                repeat{
-            //                    pos = position
-            //
-            ////                    pos.x += CGFloat(Int.random(in: -1...1) * Character.Agility)
-            ////                    pos.y += CGFloat(Int.random(in: -1...1) * Character.Agility)
-            //                    pos.x += (cos(CGFloat.random(in: 0...360) * CGFloat.pi / 180)) * CGFloat(Character.Agility)
-            //                    pos.y += sin(CGFloat.random(in: 0...360) * CGFloat.pi / 180) * CGFloat(Character.Agility)
-            //
-            //                } while(position.x < bunker.x0 || position.x > bunker.x || position.y < bunker.y0 || position.y > bunker.y)
-            //
-            //                position = pos
-            //
-            //            }
-            //            var pos = position
-            //
-            //            repeat{
-            //
-            //                pos = position
-            ////            var offset = CGPoint(x: CGFloat.random(in: bunker.x0...bunker.x), y: CGFloat.random(in: bunker.y0...bunker.y))
-            //
-            //                pos.x += CGFloat(Int(cos(CGFloat.pi)) * Character.Agility / 2)
-            //                pos.y += CGFloat(Int(sin(CGFloat.pi)) * Character.Agility / 2)
-            //            }while (position.x < bunker.x0 || position.x > bunker.x)
-            //}
-            
-            //}
-            
-            //}
-            
         }
     }
-    //} while position == target_coord
-    //} while position == newCoord
-    //           Int(position.x) != Int(newCoord.x) || Int(position.y) != Int(newCoord.y)
-    //
-    //
-    //        }
-    //        else{
-    //step()
+    
     
     
     init(){
@@ -858,12 +733,10 @@ class Human : Identifiable{
         sex = sexAll[Bool.random() == true ? 1 : 0]
         size = 10.0
         position = CGPoint(x: CGFloat.random(in: bunker.x0 + 30...bunker.x - 30), y: CGFloat.random(in: bunker.y0 + 30...bunker.y - 30))//bunker.position
-        //angle = 0
-        Character = Сharacteristic.init()
+        Character = Characteristic.init()
         Profession = profAll[Int.random(in: 0...2)]
         isFree = true
         target_coord = position
-        satiety = 10
         isFight = false
         isAlive = true
         backpack = Backpack.init()
@@ -930,7 +803,7 @@ class World : ObservableObject {
     static var shared = World()
     var humObj = HumanObject()
     var zombObj = ZombieObject()
-    //var bioms = Bioms()
+    
     @Published var isNight : Bool = false
     @Published var isPause = false
     @Published var day : Int = 0
@@ -947,7 +820,7 @@ class World : ObservableObject {
         
         
         if zombie.Character.Health <= 0{
-
+            
             human.isFight = false
             zombie.isAlive = false
         }
@@ -987,15 +860,15 @@ class World : ObservableObject {
                         day += 1
                         
                         if day % 3 == 0 {
-                            forest.amountOfResources = humObj.getAmountOfPeople() * 2
-                            mine.amountOfResources = humObj.getAmountOfPeople() * 2
+                            forest.amountOfResources = bunker.maxFoodSupply * 2
+                            mine.amountOfResources = bunker.maxResourcesSupply * 2
                         }
                         
                         humObj.humans.indices.forEach{
                             index in
                             
-                            if humObj.humans[index].satiety > 0{
-                                humObj.humans[index].satiety -= 1
+                            if humObj.humans[index].Character.Satiety > 0{
+                                humObj.humans[index].Character.Satiety -= 1
                             }
                             
                         }
@@ -1021,7 +894,7 @@ class World : ObservableObject {
                         humObj.humans.indices.forEach{
                             index in
                             
-                            if humObj.humans[index].satiety == 0 && humObj.humans[index].Character.Health > 0{
+                            if humObj.humans[index].Character.Satiety == 0 && humObj.humans[index].Character.Health > 0{
                                 humObj.humans[index].Character.Health -= (50 / humObj.humans[index].Character.Strength)
                                 
                                 if humObj.humans[index].Character.Health <= 0{
@@ -1029,9 +902,9 @@ class World : ObservableObject {
                                 }
                             }
                             
-                            if humObj.humans[index].satiety != 10 && bunker.FoodSupply != 0 && humObj.humans[index].isAlive{
+                            if humObj.humans[index].Character.Satiety != 10 && bunker.FoodSupply != 0 && humObj.humans[index].isAlive{
                                 
-                                humObj.humans[index].satiety += 1
+                                humObj.humans[index].Character.Satiety += 1
                                 bunker.FoodSupply -= 1
                             }
                         }
@@ -1045,26 +918,25 @@ class World : ObservableObject {
                             
                             zombObj.zombies[index].isAlive = true
                             zombObj.zombies[index].isFight = false
+                            zombObj.zombies[index].Character.Health = zombObj.zombies[index].Character.maxHealth
                             
                             if !zombObj.zombies[index].isFight{
                                 zombObj.zombies[index].position = CGPoint(x: -10, y: -10)
                                 zombObj.zombies[index].isFight = false
                             }
                         }
-   
+                        
                     }
                     else{
                         zombObj.mechanics()
                     }
                 }
-                
             }
             
             
             
             //логика людей
             if !isPause{
-                
                 
                 if humObj.getAmountOfPeople() < bunker.CapacityOfPeople {
                     
@@ -1075,25 +947,25 @@ class World : ObservableObject {
                     if newArrGirl.count > 0 && newArrMan.count > 0{
                         
                         if newArrGirl.count >= newArrMan.count{
-                         
+                            
                             newArrMan.indices.forEach{index_ in
                                 
                                 var i = humObj.humans.firstIndex(where: {$0.id == newArrMan[index_].id})
                                 
                                 humObj.humans[i!].isLove = true
                                 
-                                Timer.scheduledTimer(withTimeInterval: timeOfDay * 3, repeats: false){_ in
+                                Timer.scheduledTimer(withTimeInterval: timeOfDay, repeats: false){_ in
                                     
                                     humObj.humans[i!].isLove = false
                                     
                                 }
-
+                                
                                 
                                 i = humObj.humans.firstIndex(where: { $0.id == newArrGirl[index_].id})
                                 
                                 humObj.humans[i!].isLove = true
                                 
-                                Timer.scheduledTimer(withTimeInterval: timeOfDay * 3, repeats: false){_ in
+                                Timer.scheduledTimer(withTimeInterval: timeOfDay, repeats: false){_ in
                                     
                                     humObj.humans[i!].isLove = false
                                     humObj.humans[i!].isChildBirth = true
@@ -1112,7 +984,7 @@ class World : ObservableObject {
                                 
                                 humObj.humans[i!].isLove = true
                                 
-                                Timer.scheduledTimer(withTimeInterval: timeOfDay * 3, repeats: false){_ in
+                                Timer.scheduledTimer(withTimeInterval: timeOfDay, repeats: false){_ in
                                     
                                     humObj.humans[i!].isLove = false
                                     
@@ -1122,26 +994,17 @@ class World : ObservableObject {
                                 
                                 humObj.humans[i!].isLove = true
                                 
-                                Timer.scheduledTimer(withTimeInterval: timeOfDay * 3, repeats: false){_ in
+                                Timer.scheduledTimer(withTimeInterval: timeOfDay, repeats: false){_ in
                                     
                                     humObj.humans[i!].isLove = false
                                     humObj.humans[i!].isChildBirth = true
                                     humObj.humans[i!].isFree = false
-
+                                    
                                     
                                 }
-                                
-                                
                             }
-                            
-                            
                         }
-                        
-                        
                     }
-                    
-                    
-                    
                 }
                 
                 
@@ -1185,59 +1048,40 @@ class World : ObservableObject {
                         }
                     }
                     else if humObj.humans[index].Profession == "Врач" && humObj.humans[index].isFree && !humObj.humans[index].isLove{
-
+                        
                         humObj.humans.indices.forEach{index_ in
-                                
-                            if humObj.humans[index_].isChildBirth {
+                            
+                            let num = humObj.humans.filter{$0.Profession == "Врач" && !$0.isFree}.count
+                            
+                            if humObj.humans[index_].isChildBirth && (humObj.getAmountOfPeople() + num < bunker.CapacityOfPeople){
                                 
                                 humObj.humans[index].isFree = false
-                             
+                                
                                 Timer.scheduledTimer(withTimeInterval: timeOfDay / 2 , repeats: false){_ in
                                     
-                                let chance = humObj.humans[index].Character.Intelligence * 10
-                                
-                                if !(chance < Int.random(in: 0...100)){
-                                 
-                                    addHuman()
+                                    let chance = humObj.humans[index].Character.Intelligence * 10
+                                    
+                                    if !(chance < Int.random(in: 0...100)){
+                                        
+                                        addHuman()
+                                        
+                                    }
+                                    
+                                    humObj.humans[index].isFree = true
+                                    humObj.humans[index_].isChildBirth = false
+                                    humObj.humans[index_].isFree = true
                                     
                                 }
-                                    
-                                humObj.humans[index].isFree = true
-                                humObj.humans[index_].isChildBirth = false
-                                humObj.humans[index_].isFree = true
                                 
                             }
-                            
-                            }
                         }
-//                          if index != index_{
-//
-//                                                            if humObj.humans[index_].sex == "Мужской"{
-
-
-
-
-
-}
-                    //
-                    ////                                if humObj.humans[index_].Profession == "Охотник" && humObj.humans[index_].isRelax{
-                    ////
-                    ////                                    humObj.humans[index].isFree = false
-                    ////
-                    ////
-                    ////                                } else if (humObj.humans[index_].Profession == "Врач" || humObj.humans[index_].Profession == "Инженер") && humObj.humans[index_].isFree{
-                    ////
-                    ////                                }
-                    //                                }
-                    //                            }
-                    //
-                    //                        }
+                    }
                     
                     
                     let human = humObj.humans[index]
                     
                     
-                    //передвижение
+                    //передвижение и дополнение к логике охотника и инженера
                     if !human.isFight && human.isAlive{
                         human.step()
                     }
@@ -1268,133 +1112,7 @@ class World : ObservableObject {
                             }
                         }
                     }
-                    
-                    
-                    
                 }
-                
-                //                    humObj.humans.indices.forEach{
-                //
-                //                        indexH in
-                //
-                //
-                //                    }
-                
-                
-                //                else if (human.Profession == "Инженер" && bunker.ResourcesSupply != 0){
-                //
-                //                    bunker.ResourcesSupply -= 1
-                //
-                //                    human.isFree = false
-                //
-                //                    Timer.scheduledTimer(withTimeInterval: timeOfDay / Double(human.Character.Intelligence), repeats: false){_ in
-                //
-                //                        addHuman()
-                //                        bunker.CapacityOfPeople += 1
-                //
-                //                        Timer.scheduledTimer(withTimeInterval: timeOfDay - timeOfDay / Double(human.Character.Intelligence), repeats: false){_ in
-                //                            human.isFree = true
-                //                        }
-                //
-                //                    }
-                //
-                //
-                //
-                //
-                //
-                //
-                //                }
-                
-                //////////////////
-                //}
-                
-       
-                //                        //Timer.scheduledTimer(withTimeInterval: )
-                ////                        let choose = Bool.random()
-                ////
-                ////                        if choose{
-                //                        humObj.humans[index].target_coord = CGPoint(x: CGFloat.random(in: forest.x0...forest.x), y: CGFloat.random(in: forest.y0...forest.y))
-                //
-                ////                        }else {
-                ////
-                ////                            humObj.humans[index].target_coord = CGPoint(x: CGFloat.random(in: mine.x0...mine.x), y: CGFloat.random(in: mine.y0...mine.y))
-                ////
-                ////                                    }
-                //
-                //                        //repeat{
-                //
-                //                        if humObj.humans[index].position.x != humObj.humans[index].target_coord.x{
-                //
-                //                            humObj.humans[index].position.x += CGFloat(humObj.humans[index].Character.Agility / 2)
-                //
-                //                            if humObj.humans[index].target_coord.x - humObj.humans[index].position.x < CGFloat(humObj.humans[index].Character.Agility / 2){
-                //
-                //                                humObj.humans[index].position.x += humObj.humans[index].target_coord.x - humObj.humans[index].position.x
-                //
-                //                            }
-                //
-                //                        }
-                //
-                //                        if humObj.humans[index].position.y != humObj.humans[index].target_coord.y{
-                //
-                //                            humObj.humans[index].position.y += CGFloat(humObj.humans[index].Character.Agility / 2)
-                //
-                //                            if humObj.humans[index].target_coord.y - humObj.humans[index].position.y < CGFloat(humObj.humans[index].Character.Agility / 2){
-                //
-                //                                humObj.humans[index].position.y += humObj.humans[index].target_coord.y - humObj.humans[index].position.y
-                //
-                //                            }
-                //                        }
-                //
-                //                        //} while position == target_coord
-                //                        //} while position == newCoord
-                //                        //           Int(position.x) != Int(newCoord.x) || Int(position.y) != Int(newCoord.y)
-                //                        //
-                //                        //
-                //                        //        }
-                //                        //        else{
-                //                        //step()
-                //                    }
-                //
-                //                    else if humObj.humans[index].Profession == "Инженер"{
-                //
-                //                        if bunker.ResourcesSupply != 0{
-                //
-                //                            bunker.ResourcesSupply -= 1
-                //                            humObj.humans[index].isFree = false
-                //
-                //                            Timer.scheduledTimer(withTimeInterval: timeOfDay / Double(humObj.humans[index].Character.Intelligence), repeats: false){_ in
-                //
-                //                              addHuman()
-                //                              bunker.CapacityOfPeople += 1
-                //
-                //                              Timer.scheduledTimer(withTimeInterval: timeOfDay - timeOfDay / Double(humObj.humans[index].Character.Intelligence), repeats: false){_ in
-                //                                humObj.humans[index].isFree = true
-                //                              }
-                //
-                //                          }
-                //
-                //                        }
-                //                        else {
-                //
-                //                            var newPosition = humObj.humans[index].position
-                //
-                //                                  repeat {
-                //                                    newPosition = humObj.humans[index].position
-                //
-                //                                    humObj.humans[index].angle += CGFloat(Int.random(in: -30..<30))
-                //                                    newPosition.y += CGFloat(sin(humObj.humans[index].angle * CGFloat.pi / 180) * CGFloat(humObj.humans[index].Character.Agility) / 2)
-                //                                    newPosition.x += CGFloat(cos(humObj.humans[index].angle * CGFloat.pi / 180) * CGFloat(humObj.humans[index].Character.Agility) / 2)
-                //                                  } while newPosition.y < bunker.y0 || newPosition.x < bunker.x0 || newPosition.y > bunker.y || newPosition.x > bunker.x
-                //
-                //                            humObj.humans[index].position = newPosition
-                //
-                //                        }
-                //                    }
-                //
-                //                }
-                
-                
             }
             objectWillChange.send() //обновление view
         }
@@ -1420,87 +1138,7 @@ class World : ObservableObject {
                 }
             }
         }
-        
-        //        Timer.scheduledTimer(withTimeInterval: timeOfDay, repeats: true){
-        //            [self] timer in
-        
-        //            var humans_temp : [Human] = humObj.humans
-        
-        //            if !isPause{
-        //                day += 1
-        //
-        //
-        //                forest.amountOfResources =  humObj.getAmountOfPeople() / 2
-        //                mine.amountOfResources = humObj.getAmountOfPeople() / 2
-        //
-        //                humObj.humans.indices.forEach{
-        //                    index in
-        //
-        //                    if bunker.FoodSupply != 0{
-        //                        bunker.FoodSupply -= 1
-        //                    }
-        //                    if humObj.humans[index].satiety == 0{
-        //                        humObj.humans[index].isAlive = false
-        //                    }
-        //
-        //                }
-        
-        //                if bunker.FoodSupply < humObj.humans.count && forest.amountOfResources != 0{
-        //                    for index in 0..<forest.amountOfResources{
-        //                        humObj.humans.filter{$0.Profession == "Охотник"}
-        //                    }
-        //                }
-        
-        //humObj.humans = humans_temp
-        
-        //            }
-        //
-        //            if (humObj.getAmountOfPeople() < bunker.CapacityOfPeople && humObj.getAmountOfPeopleBySex(sex: "Мужской") != 0 && humObj.getAmountOfPeopleBySex(sex: "Женский") != 0){
-        //
-        //                humObj.humans.append(Human())
-        //                amountOfPeople += 1
-        //           }
-        
-        //        }
-        // }
-        
-        //if isPause{
-        //            scheduledTimer(withTimeInterval: timeOfDay / 2, repeats: true){
-        //                            [self] timer in
-        //
-        //                            if !isPause {
-        //                                isNight.toggle()
-        //                                humObj.humans.indices.forEach{
-        //                                    index in
-        //                                    //print(index)
-        //                                    humObj.humans[index].satiety -= 1
-        //                                }
-        //                            }
-        //
-        //                            if !isNight {
-        //                                //var zombies = zombObj.zombies
-        //                                zombObj.zombies.indices.forEach{
-        //                                    index in
-        //                                    if !zombObj.zombies[index].isFight{
-        //                                        zombObj.zombies[index].position = CGPoint(x: -10, y: -10)
-        //                                        zombObj.zombies[index].isFight = false
-        //                                    }
-        //                                }
-        //                                //zombObj.zombies = zombies
-        //                                //zombObj.zombies = []
-        //                            }
-        //                            else{
-        //                                zombObj.mechanics()
-        //                                //zombObj = ZombieObject()
-        //                            }
-        //
-        //                        }
-        //Timer.//}
-        
-        
-        
     }
-    
 }
 
 
@@ -1508,7 +1146,6 @@ class World : ObservableObject {
 
 class ViewModel: ObservableObject {
     
-    @State var time = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     var subscriptions = Set<AnyCancellable>()
     @Published var world = World.shared
     
